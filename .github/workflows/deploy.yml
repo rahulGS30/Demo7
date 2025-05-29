@@ -34,7 +34,7 @@ jobs:
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        uses: ./.github/actions/scripts/install-deps.ps1
+        run: ./.github/actions/scripts/install-deps.ps1
         shell: pwsh
       - name: Test code
         id: run-tests
@@ -59,7 +59,7 @@ jobs:
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        uses: ./.github/actions/scripts/install-deps.ps1
+        run: ./.github/actions/scripts/install-deps.ps1
         shell: pwsh
       - name: Build website
         run: npm run build
