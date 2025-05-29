@@ -5,7 +5,7 @@ on:
       - master
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -17,11 +17,12 @@ jobs:
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        uses: ./.github/actions/install-deps
+        uses: ./.github/actions/scripts/install-deps.ps1
+        shell: pwsh
       - name: Lint code
         run: npm run lint
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -32,8 +33,9 @@ jobs:
           path: node_modules
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' 
-        uses: ./.github/actions/install-deps
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: ./.github/actions/scripts/install-deps.ps1
+        shell: pwsh
       - name: Test code
         id: run-tests
         run: npm run test
@@ -45,7 +47,7 @@ jobs:
           path: test.json
   build:
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -57,7 +59,8 @@ jobs:
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        uses: ./.github/actions/install-deps
+        uses: ./.github/actions/scripts/install-deps.ps1
+        shell: pwsh
       - name: Build website
         run: npm run build
       - name: Upload artifacts
@@ -67,12 +70,12 @@ jobs:
           path: dist
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Get code
         uses: actions/checkout@v3
       - name: Get build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: dist-files
           path: ./dist
